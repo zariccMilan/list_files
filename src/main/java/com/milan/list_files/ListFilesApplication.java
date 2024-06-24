@@ -1,18 +1,29 @@
 package com.milan.list_files;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
-import java.sql.PreparedStatement;
+
 
 @SpringBootApplication
+@PropertySource("classpath:application-local.properties")
 public class ListFilesApplication {
+
+    @Value("${folder.path}")
+    private String directoryPath;
 
     public static void main(String[] args) {
         SpringApplication.run(ListFilesApplication.class, args);
 
-        String directoryPath = "/Users/milanzaric/Vezbanje(java)/ListFiles/src/main/resources/ZaMilana";
+
+    }
+
+    @PostConstruct
+    public void listFiles() {
         File directory = new File(directoryPath);
 
         File[] files = directory.listFiles();
@@ -22,10 +33,6 @@ public class ListFilesApplication {
                 System.out.println(file.getName());
             }
         }
-
-        PreparedStatement preparedStatement = null;
-
-
     }
 
 }
