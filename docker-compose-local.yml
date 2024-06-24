@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  list-files-db:
+    image: "postgres"
+    restart: always
+    ports:
+      - "5492:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=topsecret
+      - POSTGRES_DB=list_files
+    volumes:
+      - list_files_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d list_files" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  list-files-redis:
+    image: "redis"
+    restart: always
+    ports:
+      - "6390:6379"
+volumes:
+  list_files_db_data:
+    external: true
