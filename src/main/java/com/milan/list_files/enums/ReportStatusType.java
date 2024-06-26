@@ -1,7 +1,6 @@
 package com.milan.list_files.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+
 import lombok.Getter;
 
 import java.util.stream.Stream;
