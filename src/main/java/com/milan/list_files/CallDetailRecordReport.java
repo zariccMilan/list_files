@@ -20,8 +20,11 @@ import java.util.UUID;
 public class CallDetailRecordReport {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "uuid7_generator")
-    @GenericGenerator(name = "uuid7_generator")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
     private UUID id;
