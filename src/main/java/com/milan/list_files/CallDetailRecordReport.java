@@ -1,5 +1,6 @@
 package com.milan.list_files;
 
+import com.milan.list_files.enums.ReportStatusType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,5 +45,8 @@ public class CallDetailRecordReport {
     @Column(name = "extension", columnDefinition = "varchar(120)")
     private String extension;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_status_type", columnDefinition = "varchar(120)")
+    private ReportStatusType reportStatusType;
 
 }

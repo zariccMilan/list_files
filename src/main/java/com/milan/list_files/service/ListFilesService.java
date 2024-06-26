@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class ListFilesService {
             Arrays.stream(files).forEach(file -> {
                 CallDetailRecordReport record = CallDetailRecordReport.builder()
                         .fileName(file.getName())
-                        .type(String.valueOf(ReportStatusType.PENDING))
+                        .reportStatusType(ReportStatusType.PENDING)
                         .build();
                 listFilesRepository.save(record);
             });
