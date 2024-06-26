@@ -5,7 +5,6 @@ import com.milan.list_files.CallDetailRecordReport;
 import com.milan.list_files.repository.ListFilesRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
