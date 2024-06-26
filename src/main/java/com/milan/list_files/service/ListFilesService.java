@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ListFilesService {
 
     private final ListFilesRepository listFilesRepository;
@@ -24,7 +26,15 @@ public class ListFilesService {
     private String directoryPath;
 
     @PostConstruct
+    public void initialProcessFiles() {
+        processFiles();
+    }
+
     @Scheduled(fixedRate = 10000) // 10 sec
+    public void scheduledProcessFiles() {
+        processFiles();
+    }
+
     public void processFiles() {
         File directory = new File(directoryPath);
         File[] files = directory.listFiles();
