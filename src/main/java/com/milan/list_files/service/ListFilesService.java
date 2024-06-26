@@ -2,6 +2,7 @@ package com.milan.list_files.service;
 
 
 import com.milan.list_files.CallDetailRecordReport;
+import com.milan.list_files.enums.ReportStatusType;
 import com.milan.list_files.repository.ListFilesRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,10 @@ public class ListFilesService {
         File[] files = directory.listFiles();
 
         if (files != null) {
-            List<File> fileList = Arrays.asList(files);
-            fileList.forEach(file -> {
+            Arrays.stream(files).forEach(file -> {
                 CallDetailRecordReport record = CallDetailRecordReport.builder()
                         .fileName(file.getName())
+                        .type(String.valueOf(ReportStatusType.PENDING))
                         .build();
                 listFilesRepository.save(record);
             });

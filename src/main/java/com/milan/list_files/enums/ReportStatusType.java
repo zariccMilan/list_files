@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 public enum ReportStatusType {
     TYPE1("type1", "Type1", ""),
     TYPE2("type2", "Type2", ""),
-    TYPE3("type3", "Type3", "");
+    TYPE3("type3", "Type3", ""),
+    PENDING("pending", "Pending", "");
 
     private final String value;
     private final String label;
@@ -25,6 +26,9 @@ public enum ReportStatusType {
         if (type == null) {
             return null;
         }
-        return Stream.of(ReportStatusType.values()).filter(t -> t.value.equals(type)).findFirst().orElse(null);
+        return Stream.of(ReportStatusType.values())
+                .filter(t -> t.value.equals(type))
+                .findFirst()
+                .orElse(null);
     }
 }
