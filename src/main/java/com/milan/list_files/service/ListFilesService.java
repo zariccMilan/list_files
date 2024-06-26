@@ -6,6 +6,7 @@ import com.milan.list_files.enums.ReportStatusType;
 import com.milan.list_files.repository.ListFilesRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -23,9 +24,11 @@ public class ListFilesService {
     private String directoryPath;
 
     @PostConstruct
+    @Scheduled(fixedRate = 10000) // 10 sec
     public void processFiles() {
         File directory = new File(directoryPath);
         File[] files = directory.listFiles();
+        System.out.println("Start processing files");
 
         if (files != null) {
             Arrays.stream(files).forEach(file -> {
