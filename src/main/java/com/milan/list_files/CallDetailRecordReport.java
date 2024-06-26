@@ -46,7 +46,7 @@ public class CallDetailRecordReport {
     private String extension;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "report_status_type", columnDefinition = "varchar(120)")
+    @Column(name = "report_status_type", columnDefinition = "varchar(120)") // for future, it should be nullable = false
     private ReportStatusType reportStatusType;
 
 }
