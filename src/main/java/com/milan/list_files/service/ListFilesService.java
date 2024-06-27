@@ -31,6 +31,9 @@ public class ListFilesService {
     @Value("${folder.path}")
     private String directoryPath;
 
+    @Value("${successful.folder.path}")
+    private String successfulFolderPath;
+
     private Set<String> processedFiles = new HashSet<>();
     private int lastProcessedPage = 0;
 
@@ -58,6 +61,7 @@ public class ListFilesService {
                             .build();
                     listFilesRepository.save(callDetailRecordReport);
                     processedFiles.add(file.getName());
+                    moveFilesToSuccessfulFolder(file);
                     log.info("Imported file: {}", file.getName());
                 } catch (EntityExistsException e) {
                     log.warn("File {} already exists with PENDING status, skipping", file.getName());
@@ -84,5 +88,18 @@ public class ListFilesService {
         int end = Math.min((start + pageable.getPageSize()), fileList.size());
 
         return new PageImpl<>(fileList.subList(start, end), pageable, fileList.size());
+    }
+
+    private void moveFilesToSuccessfulFolder(File file) {
+        File successfulDirectory = new File(successfulFolderPath);
+        if(!successfulDirectory.exists()) {
+            successfulDirectory.mkdirs();
+        }
+        File destFile = new File(successfulDirectory, file.getName());
+        if(file.renameTo(destFile)) {
+            log.info("File {} moved to {}", file.getName(), successfulFolderPath);
+        } else {
+            log.error("Failed to move file {} to {}", file.getName(), successfulFolderPath);
+        }
     }
 }
