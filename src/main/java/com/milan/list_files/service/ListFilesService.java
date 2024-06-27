@@ -47,10 +47,16 @@ public class ListFilesService {
                                     .reportStatusType(ReportStatusType.PENDING)
                                     .build();
                             listFilesRepository.save(record);
+                            if (listFilesRepository.existsByFileNameAndReportStatusType(file.getName(), ReportStatusType.PENDING)) {
+                                log.warn("File {} already exists with PENDING status, skipping", file.getName());
+                            } else {
+                                log.info("Import file {}", file.getName());
+                            }
+
                         } catch (EntityExistsException e) {
-                            System.out.println("File already exists" + file.getName());
-                            log.error(e.getMessage());
+                            log.error("File already exists in database: {}", file.getName(), e);
                         }
+
 
                     });
 
