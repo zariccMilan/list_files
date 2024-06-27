@@ -30,7 +30,7 @@ public class CallDetailRecordReport {
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "file_name", nullable = false, columnDefinition = "varchar(120)")
+    @Column(name = "file_name", unique = true, nullable = false, columnDefinition = "varchar(120)")
     private String fileName;
 
     @Column(name = "path", columnDefinition = "varchar(120)")
