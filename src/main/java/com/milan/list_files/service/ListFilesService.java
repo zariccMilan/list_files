@@ -4,9 +4,9 @@ package com.milan.list_files.service;
 import com.milan.list_files.CallDetailRecordReport;
 import com.milan.list_files.enums.ReportStatusType;
 import com.milan.list_files.repository.ListFilesRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ListFilesService {
 
     private final ListFilesRepository listFilesRepository;
@@ -48,10 +49,10 @@ public class ListFilesService {
                             listFilesRepository.save(record);
                         } catch (EntityExistsException e) {
                             System.out.println("File already exists" + file.getName());
-                            e.printStackTrace();
+                            log.error(e.getMessage());
                         }
 
-            });
+                    });
 
         }
     }
