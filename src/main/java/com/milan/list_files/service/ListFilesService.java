@@ -98,6 +98,13 @@ public class ListFilesService {
         return new PageImpl<>(fileList.subList(start, end), pageable, fileList.size());
     }
 
+    @Transactional
+    public void moveFileAndSetStatus(File file) {
+        log.info("Moving file {} to Successful folder and updating status", file.getName());
+        moveFilesToSuccessfulFolder(file);
+        updateFileStatusToSuccess(file.getName());
+    }
+
     private void moveFilesToSuccessfulFolder(File file) {
         File successfulDirectory = new File(successfulFolderPath);
         if (!successfulDirectory.exists()) {
@@ -109,5 +116,12 @@ public class ListFilesService {
         } else {
             log.error("Failed to move file {} to {}", file.getName(), successfulFolderPath);
         }
+    }
+
+    @Transactional
+    public void updateFileStatusToSuccess(String fileName) {
+        log.info("Updating status to SUCCESS for file: {}", fileName);
+        listFilesRepository.updateReportStatusByFileName(fileName, ReportStatusType.SUCCESS);
+        log.info("Updated status to SUCCESS for file: {}", fileName);
     }
 }
