@@ -10,7 +10,8 @@ public enum ReportStatusType {
     TYPE1("type1", "Type1", ""),
     TYPE2("type2", "Type2", ""),
     TYPE3("type3", "Type3", ""),
-    PENDING("pending", "Pending", "");
+    PENDING("pending", "Pending", ""),
+    SUCCESS("success", "Success", "");
 
     private final String value;
     private final String label;
