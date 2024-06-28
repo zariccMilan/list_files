@@ -55,14 +55,18 @@ public class ListFilesService {
             List<File> filesToProcess = page.getContent();
             filesToProcess.forEach(file -> {
                 try {
-                    CallDetailRecordReport callDetailRecordReport = CallDetailRecordReport.builder()
-                            .fileName(file.getName())
-                            .reportStatusType(ReportStatusType.PENDING)
-                            .build();
-                    listFilesRepository.save(callDetailRecordReport);
-                    processedFiles.add(file.getName());
-                    moveFilesToSuccessfulFolder(file);
-                    log.info("Imported file: {}", file.getName());
+                    if (file.isFile()) {
+                        CallDetailRecordReport callDetailRecordReport = CallDetailRecordReport.builder()
+                                .fileName(file.getName())
+                                .reportStatusType(ReportStatusType.PENDING)
+                                .build();
+                        listFilesRepository.save(callDetailRecordReport);
+                        processedFiles.add(file.getName());
+                        moveFilesToSuccessfulFolder(file);
+                        log.info("Imported file: {}", file.getName());
+                    } else {
+                        log.warn("Skipping directory: {}", file.getName());
+                    }
                 } catch (EntityExistsException e) {
                     log.warn("File {} already exists with PENDING status, skipping", file.getName());
                     log.error("Error message: {}", e.getMessage());
@@ -81,7 +85,7 @@ public class ListFilesService {
 
     private Page<File> fetchFilesFromDirectory(String directoryPath, Pageable pageable) {
         File directory = new File(directoryPath);
-        File[] files = directory.listFiles(file -> !new File(successfulFolderPath).equals(file.getParentFile()));
+        File[] files = directory.listFiles(file -> file.isFile() && !new File(successfulFolderPath).equals(file.getParentFile()));
 
         List<File> fileList = files != null ? Arrays.asList(files) : Collections.emptyList();
         int start = (int) pageable.getOffset();
