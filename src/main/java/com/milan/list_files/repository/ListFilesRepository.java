@@ -11,5 +11,4 @@ import java.util.UUID;
 @Repository
 public interface ListFilesRepository extends JpaRepository<CallDetailRecordReport, UUID> {
 
-    boolean existsByFileNameAndReportStatusType(String fileName, ReportStatusType reportStatusType);
 }
