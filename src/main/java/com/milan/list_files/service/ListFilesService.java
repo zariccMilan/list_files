@@ -81,22 +81,26 @@ public class ListFilesService {
 
     private Page<File> fetchFilesFromDirectory(String directoryPath, Pageable pageable) {
         File directory = new File(directoryPath);
-        File[] files = directory.listFiles();
+        File[] files = directory.listFiles(file -> !new File(successfulFolderPath).equals(file.getParentFile()));
 
         List<File> fileList = files != null ? Arrays.asList(files) : Collections.emptyList();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), fileList.size());
+
+        if (start >= fileList.size() || start < 0 || end <= start) {
+            return new PageImpl<>(Collections.emptyList(), pageable, fileList.size());
+        }
 
         return new PageImpl<>(fileList.subList(start, end), pageable, fileList.size());
     }
 
     private void moveFilesToSuccessfulFolder(File file) {
         File successfulDirectory = new File(successfulFolderPath);
-        if(!successfulDirectory.exists()) {
+        if (!successfulDirectory.exists()) {
             successfulDirectory.mkdirs();
         }
         File destFile = new File(successfulDirectory, file.getName());
-        if(file.renameTo(destFile)) {
+        if (file.renameTo(destFile)) {
             log.info("File {} moved to {}", file.getName(), successfulFolderPath);
         } else {
             log.error("Failed to move file {} to {}", file.getName(), successfulFolderPath);
