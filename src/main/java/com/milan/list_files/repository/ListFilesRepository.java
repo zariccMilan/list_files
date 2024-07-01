@@ -3,12 +3,15 @@ package com.milan.list_files.repository;
 
 import com.milan.list_files.CallDetailRecordReport;
 import com.milan.list_files.enums.ReportStatusType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.UUID;
 
@@ -20,4 +23,7 @@ public interface ListFilesRepository extends JpaRepository<CallDetailRecordRepor
     @Query("UPDATE CallDetailRecordReport r SET r.reportStatusType = :status WHERE r.fileName = :fileName")
     void updateReportStatusByFileName(@Param("fileName") String fileName, @Param("status") ReportStatusType status);
 
+    Page<CallDetailRecordReport> findByReportStatusType(ReportStatusType status, Pageable pageable);
 }
+
+
