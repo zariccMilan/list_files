@@ -46,9 +46,7 @@ public class ListFilesService {
         log.info("Start processing files");
 
         int pageSize = 10;
-
         Pageable pageable = PageRequest.of(lastProcessedPage, pageSize);
-
         Page<File> page = fetchFilesFromDirectory(directoryPath, pageable);
 
         if (!page.isEmpty()) {
@@ -62,7 +60,6 @@ public class ListFilesService {
                                 .build();
                         listFilesRepository.save(callDetailRecordReport);
                         processedFiles.add(file.getName());
-                        moveFilesToSuccessfulFolder(file);
                         log.info("Imported file: {}", file.getName());
                     } else {
                         log.warn("Skipping directory: {}", file.getName());
@@ -81,6 +78,39 @@ public class ListFilesService {
         }
 
         log.info("Finished processing files");
+    }
+
+    @Scheduled(
+            timeUnit = TimeUnit.MINUTES,
+            fixedDelayString = "${list.files.moveRateMinutes}")
+    public void movePendingFilesToSuccessFolder() {
+        log.info("Moving pending files to successful folder and updating status to SUCCESS");
+
+        int pageSize = 10; // Move 10 files at a time
+        Pageable pageable = PageRequest.of(0, pageSize);
+        Page<CallDetailRecordReport> pendingFilesPage = listFilesRepository.findByReportStatusType(ReportStatusType.PENDING, pageable);
+        List<CallDetailRecordReport> pendingFiles = pendingFilesPage.getContent();
+
+        if (!pendingFiles.isEmpty()) {
+            pendingFiles.forEach(report -> {
+                File file = new File(directoryPath, report.getFileName());
+                if (!file.exists() || !file.isFile()) {
+                    log.warn("File {} not found for moving or is not a regular file", report.getFileName());
+                    return;
+                }
+                moveFileAndSetStatus(file, report);
+            });
+        } else {
+            log.info("No pending files to move and update.");
+        }
+    }
+
+    @Transactional
+    public void moveFileAndSetStatus(File file, CallDetailRecordReport report) {
+        moveFilesToSuccessfulFolder(file);
+        report.setReportStatusType(ReportStatusType.SUCCESS);
+        listFilesRepository.save(report); // Update status to SUCCESS
+        log.info("Updated status to SUCCESS for file: {}", report.getFileName());
     }
 
     private Page<File> fetchFilesFromDirectory(String directoryPath, Pageable pageable) {
@@ -111,3 +141,4 @@ public class ListFilesService {
         }
     }
 }
+
